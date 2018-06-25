@@ -1,6 +1,7 @@
 const express = require('express');
 const expressMongoDb = require('express-mongo-db');
 const bodyParser = require('body-parser');
+const ObjectID = require('mongodb').ObjectID;
 
 const app = express();
 
@@ -11,6 +12,26 @@ app.get('/churros', (req, res) => {
     req.db.collection('sabores').find().toArray((err, data) => {
         if(err){
             res.status(500).send();
+            return;
+        }
+
+        res.send(data);
+    });
+});
+
+app.get('/churro/:id', (req, res) => {
+    let query = {
+        _id: ObjectID(req.params.id)
+    };
+
+    req.db.collection('sabores').findOne(query, (err, data) => {
+        if(err){
+            res.status(500).send();
+            return;
+        }
+
+        if(!data){
+            res.status(404).send();
             return;
         }
 
