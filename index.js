@@ -51,13 +51,44 @@ app.get('/churro/:id', (req, res) => {
     });
 });
 
+//insere um novo sabor de churro
+app.post('/churro', (req, res) => {
+    //remove dados indesejados do body
+    let churro = {
+        sabor: req.body.sabor,
+        recheio: req.body.recheio,
+        cobertura: req.body.cobertura
+    };
+
+    // exemplo de validação de email
+    // if(req.body.email.indexOf('@') == -1){
+    //     res.status(400).send({mensagem: 'Email inválido'});
+    //     return;
+    // }
+
+    req.db.collection('sabores').insert(churro, (err) => {
+        if(err){
+            res.status(500).send();
+            return;
+        }
+
+        res.send(req.body);
+    });
+});
+
 // atualiza um sabor de churro pelo id
 app.put('/churro/:id', (req, res) => {
     let query = {
         _id: ObjectID(req.params.id)
     };
 
-    req.db.collection('sabores').updateOne(query, req.body, (err, data) => {
+    let churro = {
+        sabor: req.body.sabor,
+        recheio: req.body.recheio,
+        cobertura: req.body.cobertura
+    };
+
+    req.db.collection('sabores').updateOne(query, churro, (err, data) => {
         if(err){
             res.status(500).send();
             return;
@@ -80,18 +111,6 @@ app.delete('/churro/:id', (req, res) => {
         }
 
         res.send(data);
-    });
-});
-
-//insere um novo sabor de churro
-app.post('/churro', (req, res) => {
-    req.db.collection('sabores').insert(req.body, (err) => {
-        if(err){
-            res.status(500).send();
-            return;
-        }
-
-        res.send(req.body);
     });
 });
 
