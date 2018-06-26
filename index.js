@@ -1,12 +1,14 @@
 const express = require('express');
 const expressMongoDb = require('express-mongo-db');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const ObjectID = require('mongodb').ObjectID;
 
 const app = express();
 
 app.use(expressMongoDb('mongodb://localhost/churros'));
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/churros', (req, res) => {
     req.db.collection('sabores').find().toArray((err, data) => {
@@ -25,6 +27,26 @@ app.get('/churro/:id', (req, res) => {
     };
 
     req.db.collection('sabores').findOne(query, (err, data) => {
+        if(err){
+            res.status(500).send();
+            return;
+        }
+
+        if(!data){
+            res.status(404).send();
+            return;
+        }
+
+        res.send(data);
+    });
+});
+
+app.put('/churro/:id', (req, res) => {
+    let query = {
+        _id: ObjectID(req.params.id)
+    };
+
+    req.db.collection('sabores').updateOne(query, req.body, (err, data) => {
         if(err){
             res.status(500).send();
             return;
