@@ -52,8 +52,18 @@ app.put('/churro/:id', (req, res) => {
             return;
         }
 
-        if(!data){
-            res.status(404).send();
+        res.send(data);
+    });
+});
+
+app.delete('/churro/:id', (req, res) => {
+    let query = {
+        _id: ObjectID(req.params.id)
+    };
+
+    req.db.collection('sabores').deleteOne(query, (err, data) => {
+        if(err){
+            res.status(500).send();
             return;
         }
 
